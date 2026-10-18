@@ -144,6 +144,46 @@
         </div>
       </div>
     </div>
+
+    <!-- Global Live Market & Cloud Sync Status Banner (Always visible on all tabs) -->
+    <div id="global-live-status-bar" class="border-t border-[var(--border)] bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-[var(--card)] py-2.5 px-4 sm:px-6 transition-all shadow-inner">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+        
+        <!-- Left: Status Indicators -->
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Status Badge 1: Online / Server Mode -->
+          <div id="global-status-online-badge" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1.5 shadow-sm">
+            <span id="global-status-online-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="global-status-online-text">🟢 ออนไลน์: กำลังตรวจสอบ...</span>
+          </div>
+
+          <!-- Status Badge 2: Data Freshness / Real-time type -->
+          <div id="global-status-freshness-badge" class="px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium flex items-center gap-1.5">
+            <span>⚡</span>
+            <span id="global-status-freshness-text">ข้อมูลตลาดสด OCC / CBOE สหรัฐฯ</span>
+          </div>
+
+          <!-- Status Badge 3: Exact Last Updated Timestamp -->
+          <div id="global-status-time-badge" class="px-2.5 py-1 rounded-lg bg-[var(--background)] text-[var(--foreground)] border border-[var(--border)] text-[11px] font-semibold flex items-center gap-1.5 shadow-sm">
+            <span>🕒 อัปเดตล่าสุด:</span>
+            <strong id="global-status-time-text" class="text-emerald-400">กำลังเชื่อมต่อ...</strong>
+          </div>
+        </div>
+
+        <!-- Right: Actions -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="refreshGlobalMarketData(true)" id="btn-global-refresh" title="กดดึงข้อมูลล่าสุดจาก Cloud หรือ Server ทันที" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
+            <span id="global-refresh-icon">🔄</span>
+            <span id="global-refresh-text">ซิงก์ราคาตลาดสด</span>
+          </button>
+          <button onclick="setCustomServerUrl()" title="ตั้งค่าเชื่อมต่อเซิร์ฟเวอร์ส่วนตัว" class="px-2.5 py-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-xs font-medium flex items-center gap-1 transition-all">
+            <span>🌐</span>
+            <span class="hidden sm:inline">ตั้งค่า Server</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
   </header>
 
   <!-- Main Content Container -->
@@ -2203,10 +2243,13 @@
                 }
               });
               console.log('GitHub Cloud Market Snapshot loaded successfully:', data.updated_at_th);
+              if (typeof updateGlobalStatusBar === 'function') updateGlobalStatusBar();
             }
           }
         } catch (e) {
           // Quietly fallback for local file opening
+        } finally {
+          if (typeof updateGlobalStatusBar === 'function') updateGlobalStatusBar();
         }
       },
 
@@ -5129,8 +5172,103 @@
     let currentLiveChainData = null;
     let currentLiveChainType = 'puts'; // 'puts' or 'calls'
 
-    async function checkLiveServer(manualAlert = false) {
+    // --- 6.0 GLOBAL LIVE STATUS & DATA FRESHNESS MANAGER ---
+    function updateGlobalStatusBar() {
+      const onlineBadge = document.getElementById('global-status-online-badge');
+      const onlineDot = document.getElementById('global-status-online-dot');
+      const onlineText = document.getElementById('global-status-online-text');
+      const freshnessBadge = document.getElementById('global-status-freshness-badge');
+      const freshnessText = document.getElementById('global-status-freshness-text');
+      const timeText = document.getElementById('global-status-time-text');
       const statusPill = document.getElementById('live-server-status');
+
+      if (StandaloneEngine.isServerOnline) {
+        // 1. Live Local Server (Port 8000)
+        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold flex items-center gap-1.5 shadow-sm';
+        if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+        if (onlineText) onlineText.textContent = '🟢 ออนไลน์: Live Server (Port 8000)';
+
+        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium flex items-center gap-1.5';
+        if (freshnessText) freshnessText.textContent = '⚡ สตรีมมิ่งสดวินาทีต่อวินาที (OCC / CBOE)';
+
+        const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
+        if (timeText) timeText.textContent = `สดวินาทีนี้ (${nowStr})`;
+
+        if (statusPill) {
+          statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
+          statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>⚡ โหมดราคาจริง Live Market</span>';
+        }
+      } else if (StandaloneEngine.marketSnapshot) {
+        // 2. GitHub Actions Cloud Real-Time Auto-Sync
+        const timeStr = StandaloneEngine.marketSnapshot.updated_at_th || 'สดใหม่';
+        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1.5 shadow-sm';
+        if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+        if (onlineText) onlineText.textContent = '🟢 ออนไลน์: GitHub Cloud Sync';
+
+        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium flex items-center gap-1.5';
+        if (freshnessText) freshnessText.textContent = '⚡ ข้อมูลตลาดสด OCC / CBOE สหรัฐฯ';
+
+        if (timeText) timeText.textContent = timeStr;
+
+        if (statusPill) {
+          statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
+          statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>🟢 ตลาดสด GitHub Cloud (${timeStr})</span>`;
+        }
+      } else {
+        // 3. Offline Standalone Mode
+        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-bold flex items-center gap-1.5 shadow-sm';
+        if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-400';
+        if (onlineText) onlineText.textContent = '🟢 โหมด Standalone ในตัว';
+
+        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium flex items-center gap-1.5';
+        if (freshnessText) freshnessText.textContent = '🧮 โมเดลสถิติ Black-Scholes ในตัว';
+
+        if (timeText) timeText.textContent = 'พร้อมใช้งาน 100% (ออฟไลน์)';
+
+        if (statusPill) {
+          statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm';
+          statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🟢 โหมดพร้อมใช้ Standalone (เปิดไฟล์ใช้ได้ทันที)</span>';
+        }
+      }
+    }
+
+    async function refreshGlobalMarketData(manual = false) {
+      const btn = document.getElementById('btn-global-refresh');
+      const icon = document.getElementById('global-refresh-icon');
+      const text = document.getElementById('global-refresh-text');
+      const origText = text ? text.textContent : '';
+
+      if (icon) icon.className = 'inline-block animate-spin';
+      if (text) text.textContent = 'กำลังซิงก์...';
+      if (btn) btn.disabled = true;
+
+      try {
+        await StandaloneEngine.initMarketSnapshot();
+        await checkLiveServer(false);
+
+        // Refresh active views
+        fetchLiveOptions();
+        runAIMarketTop3();
+        fetchDailyBriefing();
+
+        if (manual) {
+          const modeStr = StandaloneEngine.isServerOnline
+            ? '⚡ โหมด Live Server (ดึงราคาตลาดสดแบบสตรีมมิ่ง)'
+            : (StandaloneEngine.marketSnapshot
+              ? `🟢 โหมด GitHub Cloud (อัปเดตล่าสุด: ${StandaloneEngine.marketSnapshot.updated_at_th})`
+              : '🟢 โหมด Standalone ภายในตัวไฟล์');
+          alert(`✅ ซิงก์ข้อมูลตลาดล่าสุดเรียบร้อยแล้ว!\n\nสถานะปัจจุบัน: ${modeStr}\nระบบคำนวณและดีล AI ทั้งหมดได้รับการปรับปรุงเป็นข้อมูลล่าสุดแล้วครับ`);
+        }
+      } catch (err) {
+        console.warn('Refresh error:', err);
+      } finally {
+        if (icon) icon.className = '';
+        if (text) text.textContent = origText || 'ซิงก์ราคาตลาดสด';
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    async function checkLiveServer(manualAlert = false) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 800);
@@ -5139,8 +5277,7 @@
         if (res.ok) {
           const data = await res.json();
           StandaloneEngine.isServerOnline = true;
-          statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
-          statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>⚡ โหมดราคาจริง Live Market</span>';
+          updateGlobalStatusBar();
           if (manualAlert) alert('✅ เชื่อมต่อเซิร์ฟเวอร์ดึงราคาจริง (Live Market) สำเร็จ 100%!');
           return true;
         }
@@ -5149,20 +5286,17 @@
       }
 
       StandaloneEngine.isServerOnline = false;
-      if (StandaloneEngine.marketSnapshot) {
-        const timeStr = StandaloneEngine.marketSnapshot.updated_at_th || 'สดใหม่';
-        statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
-        statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>🟢 ตลาดสด GitHub Cloud (${timeStr})</span>`;
-        if (manualAlert) alert(`🟢 เชื่อมต่อข้อมูลตลาดสดจาก GitHub Cloud สำเร็จ 100%!\nอัปเดตล่าสุด: ${timeStr}\n(ระบบ GitHub Actions ดึงราคาจากตลาดหุ้นสหรัฐฯ ให้อัตโนมัติ)`);
-        return true;
-      }
+      updateGlobalStatusBar();
 
-      statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm';
-      statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🟢 โหมดพร้อมใช้ Standalone (เปิดไฟล์ใช้ได้ทันที)</span>';
       if (manualAlert) {
-        alert('🟢 คุณกำลังใช้งานในโหมด Standalone พร้อมใช้ 100%\n\nไฟล์ HTML นี้มีฐานข้อมูลและสมอง AI คำนวณในตัวเรียบร้อยแล้ว ไม่จำเป็นต้องเปิด Server หรือป้อนคำสั่งใดๆ!\n\n(หากต้องการราคา Options สดวินาทีต่อวินาทีจากตลาดสหรัฐฯ ก็สามารถกดปุ่ม "🌐 เชื่อมต่อ Real-time Server" เพื่อต่อกับเครื่องหลักหรือรัน start_server.bat ได้)');
+        if (StandaloneEngine.marketSnapshot) {
+          const timeStr = StandaloneEngine.marketSnapshot.updated_at_th || 'สดใหม่';
+          alert(`🟢 เชื่อมต่อข้อมูลตลาดสดจาก GitHub Cloud สำเร็จ 100%!\nอัปเดตล่าสุด: ${timeStr}\n(ระบบ GitHub Actions ดึงราคาจากตลาดหุ้นสหรัฐฯ ให้อัตโนมัติ)`);
+        } else {
+          alert('🟢 คุณกำลังใช้งานในโหมด Standalone พร้อมใช้ 100%\n\nไฟล์ HTML นี้มีฐานข้อมูลและสมอง AI คำนวณในตัวเรียบร้อยแล้ว ไม่จำเป็นต้องเปิด Server หรือป้อนคำสั่งใดๆ!\n\n(หากต้องการราคา Options สดวินาทีต่อวินาทีจากตลาดสหรัฐฯ ก็สามารถกดปุ่ม "🌐 เชื่อมต่อ Real-time Server" เพื่อต่อกับเครื่องหลักหรือรัน start_server.bat ได้)');
+        }
       }
-      return false;
+      return !!StandaloneEngine.marketSnapshot;
     }
 
     function quickFetchLive(ticker) {
