@@ -2388,6 +2388,7 @@
     const StandaloneEngine = {
       isServerOnline: false,
       marketSnapshot: null,
+      lastSyncedAt: null,
 
       async initMarketSnapshot() {
         try {
@@ -2396,6 +2397,7 @@
             const data = await res.json();
             if (data && data.status === 'success' && data.stocks) {
               this.marketSnapshot = data;
+              this.lastSyncedAt = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
               Object.keys(data.stocks).forEach(tk => {
                 const s = data.stocks[tk];
                 if (s && s.price > 0) {
@@ -5350,6 +5352,33 @@
     let currentLiveChainData = null;
     let currentLiveChainType = 'puts'; // 'puts' or 'calls'
 
+    // --- Helper: Check US Stock Market Open/Closed Status ---
+    function getUsMarketStatus() {
+      try {
+        const now = new Date();
+        const estStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+        const estDate = new Date(estStr);
+        const day = estDate.getDay(); // 0 = Sun, 6 = Sat
+        const hours = estDate.getHours();
+        const minutes = estDate.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
+
+        if (day === 0 || day === 6) {
+          return { isOpen: false, isWeekend: true, label: "ตลาดปิด (เสาร์-อาทิตย์)" };
+        }
+        // 9:30 AM = 570, 4:00 PM = 960 (US Eastern)
+        if (totalMinutes >= 570 && totalMinutes <= 960) {
+          return { isOpen: true, isWeekend: false, label: "🟢 ตลาดสหรัฐฯ เปิดทำการ" };
+        } else if (totalMinutes < 570) {
+          return { isOpen: false, isWeekend: false, label: "ตลาดปิด (เปิด 20:30 น.)" };
+        } else {
+          return { isOpen: false, isWeekend: false, label: "ตลาดปิด (หลังตลาดปิด)" };
+        }
+      } catch (e) {
+        return { isOpen: false, isWeekend: false, label: "ตลาดปิด" };
+      }
+    }
+
     // --- 6.0 GLOBAL LIVE STATUS & DATA FRESHNESS MANAGER ---
     function updateGlobalStatusBar() {
       const onlineBadge = document.getElementById('global-status-online-badge');
@@ -5359,18 +5388,19 @@
       const freshnessText = document.getElementById('global-status-freshness-text');
       const timeText = document.getElementById('global-status-time-text');
       const statusPill = document.getElementById('live-server-status');
+      const marketStatus = getUsMarketStatus();
 
       if (StandaloneEngine.isServerOnline) {
         // 1. Live Local Server (Port 8000)
-        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold flex items-center gap-1.5 shadow-sm';
-        if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+        if (onlineBadge) onlineBadge.className = 'px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold flex items-center gap-1.5 shadow-sm text-[11px] sm:text-xs whitespace-nowrap';
+        if (onlineDot) onlineDot.className = 'w-2 sm:w-2.5 sm:h-2 sm:h-2.5 rounded-full bg-emerald-400 animate-pulse';
         if (onlineText) onlineText.textContent = '🟢 ออนไลน์: Live Server (Port 8000)';
 
-        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium flex items-center gap-1.5';
+        if (freshnessBadge) freshnessBadge.className = 'px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium flex items-center gap-1 text-[11px] sm:text-xs whitespace-nowrap';
         if (freshnessText) freshnessText.textContent = '⚡ สตรีมมิ่งสดวินาทีต่อวินาที (OCC / CBOE)';
 
         const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
-        if (timeText) timeText.textContent = `สดวินาทีนี้ (${nowStr})`;
+        if (timeText) timeText.innerHTML = `<span>สดวินาทีนี้ (${nowStr})</span>`;
 
         if (statusPill) {
           statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
@@ -5379,14 +5409,22 @@
       } else if (StandaloneEngine.marketSnapshot) {
         // 2. GitHub Actions Cloud Real-Time Auto-Sync
         const timeStr = StandaloneEngine.marketSnapshot.updated_at_th || 'สดใหม่';
-        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1.5 shadow-sm';
-        if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+        const syncAt = StandaloneEngine.lastSyncedAt || (new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.');
+
+        if (onlineBadge) onlineBadge.className = 'px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold flex items-center gap-1.5 shadow-sm text-[11px] sm:text-xs whitespace-nowrap';
+        if (onlineDot) onlineDot.className = 'w-2 sm:w-2.5 sm:h-2 sm:h-2.5 rounded-full bg-emerald-400 animate-pulse';
         if (onlineText) onlineText.textContent = '🟢 ออนไลน์: GitHub Cloud Sync';
 
-        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-sky-500/15 text-sky-300 border border-sky-500/30 font-medium flex items-center gap-1.5';
-        if (freshnessText) freshnessText.textContent = '⚡ ข้อมูลตลาดสด OCC / CBOE สหรัฐฯ';
+        if (freshnessBadge) {
+          freshnessBadge.className = marketStatus.isOpen
+            ? 'px-2 sm:px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-medium flex items-center gap-1 text-[11px] sm:text-xs whitespace-nowrap'
+            : 'px-2 sm:px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium flex items-center gap-1 text-[11px] sm:text-xs whitespace-nowrap';
+        }
+        if (freshnessText) freshnessText.textContent = marketStatus.isOpen ? '⚡ ตลาดสด OCC / CBOE (เปิดทำการ)' : `⏸️ ${marketStatus.label}`;
 
-        if (timeText) timeText.textContent = timeStr;
+        if (timeText) {
+          timeText.innerHTML = `<span>ราคาตลาด: <strong class="text-emerald-400">${timeStr}</strong></span> <span class="text-[10px] text-[var(--muted-foreground)] hidden sm:inline">(ตรวจเช็คแล้ว ${syncAt})</span>`;
+        }
 
         if (statusPill) {
           statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
@@ -5394,11 +5432,11 @@
         }
       } else {
         // 3. Offline Standalone Mode
-        if (onlineBadge) onlineBadge.className = 'px-2.5 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-bold flex items-center gap-1.5 shadow-sm';
+        if (onlineBadge) onlineBadge.className = 'px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-bold flex items-center gap-1.5 shadow-sm text-[11px] sm:text-xs whitespace-nowrap';
         if (onlineDot) onlineDot.className = 'w-2.5 h-2.5 rounded-full bg-indigo-400';
         if (onlineText) onlineText.textContent = '🟢 โหมด Standalone ในตัว';
 
-        if (freshnessBadge) freshnessBadge.className = 'px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium flex items-center gap-1.5';
+        if (freshnessBadge) freshnessBadge.className = 'px-2 sm:px-2.5 py-1 rounded-lg bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-medium flex items-center gap-1.5 text-[11px] sm:text-xs whitespace-nowrap';
         if (freshnessText) freshnessText.textContent = '🧮 โมเดลสถิติ Black-Scholes ในตัว';
 
         if (timeText) timeText.textContent = 'พร้อมใช้งาน 100% (ออฟไลน์)';
@@ -5507,18 +5545,27 @@
         await StandaloneEngine.initMarketSnapshot();
         await checkLiveServer(false);
 
-        // Refresh active views
-        fetchLiveOptions();
-        runAIMarketTop3();
-        fetchDailyBriefing();
+        StandaloneEngine.lastSyncedAt = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' น.';
+        updateGlobalStatusBar();
 
         if (manual) {
           const modeStr = StandaloneEngine.isServerOnline
-            ? '⚡ โหมด Live Server (ดึงราคาตลาดสดแบบสตรีมมิ่ง)'
+            ? '⚡ โหมด Live Server (ดึงราคาตลาดสดแบบสตรีมมิ่งสดวินาทีต่อวินาที)'
             : (StandaloneEngine.marketSnapshot
-              ? `🟢 โหมด GitHub Cloud (อัปเดตล่าสุด: ${StandaloneEngine.marketSnapshot.updated_at_th})`
+              ? '🟢 โหมด GitHub Cloud Sync (ดึงข้อมูลตลาดสด 100%)'
               : '🟢 โหมด Standalone ภายในตัวไฟล์');
-          alert(`✅ ซิงก์ข้อมูลตลาดล่าสุดเรียบร้อยแล้ว!\n\nสถานะปัจจุบัน: ${modeStr}\nระบบคำนวณและดีล AI ทั้งหมดได้รับการปรับปรุงเป็นข้อมูลล่าสุดแล้วครับ`);
+
+          const marketStatus = getUsMarketStatus();
+          const snapTime = StandaloneEngine.marketSnapshot ? StandaloneEngine.marketSnapshot.updated_at_th : '-';
+
+          alert(`✅ ซิงก์ตรวจเช็คข้อมูลตลาดล่าสุดสำเร็จ 100%!\n\n` +
+                `⏱️ เวลาที่กดตรวจเช็ค: ${StandaloneEngine.lastSyncedAt}\n` +
+                `🌐 โหมดการเชื่อมต่อ: ${modeStr}\n` +
+                `📊 เวลาของข้อมูลราคาในตลาด: ${snapTime}\n` +
+                `🏛️ สถานะตลาดหุ้นสหรัฐฯ: ${marketStatus.label}\n\n` +
+                (marketStatus.isOpen 
+                  ? `(ตลาดเปิดทำการอยู่ ระบบจะอัปเดตราคาใหม่ทุก 30 นาที)` 
+                  : `(หมายเหตุ: วันนี้ตลาดสหรัฐฯ ปิดทำการ ราคาจึงเป็นราคาปิดรอบล่าสุด ระบบจะเริ่มดึงราคาใหม่แบบอัตโนมัติเมื่อตลาดเปิด คืนวันจันทร์ เวลา 20:30 น. เป็นต้นไปครับ)`));
         }
       } catch (err) {
         console.warn('Refresh error:', err);
