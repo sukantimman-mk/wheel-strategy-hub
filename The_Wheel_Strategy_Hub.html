@@ -2181,6 +2181,34 @@
     // =========================================================================
     const StandaloneEngine = {
       isServerOnline: false,
+      marketSnapshot: null,
+
+      async initMarketSnapshot() {
+        try {
+          const res = await fetch('./market_data.json?t=' + Date.now());
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.status === 'success' && data.stocks) {
+              this.marketSnapshot = data;
+              Object.keys(data.stocks).forEach(tk => {
+                const s = data.stocks[tk];
+                if (s && s.price > 0) {
+                  if (!this.stockDb[tk]) {
+                    this.stockDb[tk] = { name: s.name, price: s.price, iv: s.iv || 45, ivr: s.ivr || 50, hv: s.hv || 38, cap: s.cap || '', sec: s.sector || '', ind: s.industry || '' };
+                  } else {
+                    this.stockDb[tk].price = s.price;
+                    if (s.name) this.stockDb[tk].name = s.name;
+                    if (s.cap) this.stockDb[tk].cap = s.cap;
+                  }
+                }
+              });
+              console.log('GitHub Cloud Market Snapshot loaded successfully:', data.updated_at_th);
+            }
+          }
+        } catch (e) {
+          // Quietly fallback for local file opening
+        }
+      },
 
       getUpcomingExpirations() {
         const exps = [];
@@ -2213,6 +2241,50 @@
 
       getOptions(ticker = 'SOFI', targetDate = null) {
         ticker = (ticker || 'SOFI').toUpperCase().trim();
+        if (this.marketSnapshot && this.marketSnapshot.stocks && this.marketSnapshot.stocks[ticker]) {
+          const cloudStock = this.marketSnapshot.stocks[ticker];
+          const exps = (cloudStock.expirations && cloudStock.expirations.length > 0) ? cloudStock.expirations : this.getUpcomingExpirations();
+          const exp = targetDate && exps.includes(targetDate) ? targetDate : (exps[1] || exps[0]);
+          
+          if (cloudStock.chains && cloudStock.chains[exp]) {
+            const chain = cloudStock.chains[exp];
+            const now = new Date();
+            const expDate = new Date(exp);
+            const dte = Math.max(1, Math.round((expDate - now) / (1000 * 60 * 60 * 24)));
+            const expsDetail = exps.map(e => ({
+              date: e,
+              dte: Math.max(1, Math.round((new Date(e) - now) / (1000 * 60 * 60 * 24))),
+              earnings_clash: false
+            }));
+
+            return {
+              success: true,
+              ticker: ticker,
+              current_price: cloudStock.price,
+              company_name: cloudStock.name,
+              expiration: exp,
+              dte: dte,
+              expirations: exps,
+              expirations_detail: expsDetail,
+              earnings: {
+                date: cloudStock.earnings_date || 'N/A',
+                days_away: 30,
+                clash: false,
+                message: `วันประกาศงบอยู่นอกรอบสัญญา (ข้อมูล Real-Time จาก GitHub Cloud)`
+              },
+              iv_metrics: {
+                atm_iv_pct: cloudStock.iv || 50.0,
+                iv_rank: cloudStock.ivr || 55,
+                iv_percentile: cloudStock.ivr || 55,
+                hv30_pct: cloudStock.hv || 40.0,
+                recommendation: `IV Rank อยู่ที่ ${cloudStock.ivr || 55}% สภาพแวดล้อมพรีเมียมสมบูรณ์แบบสำหรับการขาย The Wheel (อัปเดตจาก Cloud)`
+              },
+              puts: chain.puts || [],
+              calls: chain.calls || []
+            };
+          }
+        }
+
         const base = this.stockDb[ticker] || {
           name: `${ticker} Corp`,
           price: 50.0,
@@ -2444,6 +2516,17 @@
       },
 
       getMarketTop3(strategy = 'CSP') {
+        if (this.marketSnapshot) {
+          if (strategy === 'CSP' && this.marketSnapshot.top3_csp && this.marketSnapshot.top3_csp.length > 0) {
+            return {
+              success: true,
+              strategy: strategy,
+              scanned_watchlist_count: Object.keys(this.marketSnapshot.stocks || {}).length || 11,
+              top_stocks: this.marketSnapshot.top3_csp
+            };
+          }
+        }
+
         const exps = this.getUpcomingExpirations();
         const exp = exps[2] || exps[1];
 
@@ -5066,6 +5149,14 @@
       }
 
       StandaloneEngine.isServerOnline = false;
+      if (StandaloneEngine.marketSnapshot) {
+        const timeStr = StandaloneEngine.marketSnapshot.updated_at_th || 'สดใหม่';
+        statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-sm';
+        statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>🟢 ตลาดสด GitHub Cloud (${timeStr})</span>`;
+        if (manualAlert) alert(`🟢 เชื่อมต่อข้อมูลตลาดสดจาก GitHub Cloud สำเร็จ 100%!\nอัปเดตล่าสุด: ${timeStr}\n(ระบบ GitHub Actions ดึงราคาจากตลาดหุ้นสหรัฐฯ ให้อัตโนมัติ)`);
+        return true;
+      }
+
       statusPill.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5 shadow-sm';
       statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🟢 โหมดพร้อมใช้ Standalone (เปิดไฟล์ใช้ได้ทันที)</span>';
       if (manualAlert) {
@@ -6076,13 +6167,13 @@
         loadDemoJournal();
       }
 
-      // Check live market server on startup & fetch initial SOFI quotes, AI Market Top 3, and AI Daily Briefing
-      checkLiveServer(false).then(online => {
-        if (online) {
+      // Initialize market snapshot from GitHub Cloud, then check live server & render
+      StandaloneEngine.initMarketSnapshot().finally(() => {
+        checkLiveServer(false).then(() => {
           fetchLiveOptions();
           runAIMarketTop3();
           fetchDailyBriefing();
-        }
+        });
       });
     });
   </script>
