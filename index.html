@@ -44,6 +44,27 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
+    /* Auto-collapsing header bars for mobile/tablet */
+    .collapsible-bar {
+      max-height: 140px;
+      opacity: 1;
+      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease,
+                  padding-top 0.3s ease,
+                  padding-bottom 0.3s ease,
+                  border-color 0.25s ease;
+      overflow: hidden;
+    }
+    .collapsible-bar.bar-collapsed {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      border-top-width: 0 !important;
+      border-bottom-width: 0 !important;
+      border-color: transparent !important;
+      pointer-events: none !important;
+    }
   </style>
   <script>
     // Ensure semantic variables exist when opened standalone in Chrome/Edge outside Antigravity
@@ -103,7 +124,7 @@
 <body class="bg-[var(--background)] text-[var(--foreground)] antialiased selection:bg-emerald-500/30">
 
   <!-- Top Navigation Header -->
-  <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)]">
+  <header class="sticky top-0 z-30 bg-[var(--card)]/95 backdrop-blur border-b border-[var(--border)] transition-all">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5 sm:gap-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -118,9 +139,17 @@
             <p class="text-[11px] sm:text-xs text-[var(--muted-foreground)] hidden sm:block truncate">คู่มือการลงทุน Options สร้างกระแสเงินสด & เครื่องมือคำนวณ-บันทึกพอร์ตใช้งานจริง</p>
           </div>
         </div>
-        <button onclick="window.__toggleStandaloneTheme()" title="สลับโหมดสีมืด/สว่าง" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-xs font-medium shrink-0 flex items-center gap-1">
-          🌓 <span class="hidden sm:inline">สลับธีม</span>
-        </button>
+        <div class="flex items-center gap-1.5 shrink-0">
+          <!-- Mini Live Status Badge (Reveals automatically when status bar is collapsed on mobile) -->
+          <button onclick="toggleStatusBarManual()" id="mini-header-status-badge" title="แตะเพื่อดูรายละเอียดแถบสถานะเซิร์ฟเวอร์เต็ม" class="hidden px-2 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold items-center gap-1 shadow-sm transition-all active:scale-95">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="mini-header-status-text">🟢 ออนไลน์</span>
+            <span class="text-[9px] opacity-75">▼</span>
+          </button>
+          <button onclick="window.__toggleStandaloneTheme()" title="สลับโหมดสีมืด/สว่าง" class="px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--secondary)] text-xs font-medium shrink-0 flex items-center gap-1">
+            🌓 <span class="hidden sm:inline">สลับธีม</span>
+          </button>
+        </div>
       </div>
 
       <!-- Navigation Tabs (1-2-3-4 Trading Journey - Horizontally scrollable on mobile/tablet) -->
@@ -140,8 +169,8 @@
       </nav>
     </div>
 
-    <!-- Quick AI Institutional Toolbar (Horizontally swipeable on phone/tablet) -->
-    <div class="border-t border-[var(--border)] bg-[var(--background)]/70 py-1.5 px-3 sm:px-6 overflow-hidden">
+    <!-- Quick AI Institutional Toolbar (Horizontally swipeable, auto-collapses on scroll down) -->
+    <div id="quick-ai-toolbar" class="collapsible-bar border-t border-[var(--border)] bg-[var(--background)]/70 py-1.5 px-3 sm:px-6">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 text-xs">
         <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar touch-scroll-x py-0.5 w-full md:w-auto">
           <span class="font-bold text-[var(--foreground)] flex items-center gap-1 shrink-0 text-xs">
@@ -166,8 +195,8 @@
       </div>
     </div>
 
-    <!-- Global Live Market & Cloud Sync Status Banner -->
-    <div id="global-live-status-bar" class="border-t border-[var(--border)] bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-[var(--card)] py-2 px-3 sm:px-6 transition-all shadow-inner">
+    <!-- Global Live Market & Cloud Sync Status Banner (Auto-collapsible on mobile scroll down) -->
+    <div id="global-live-status-bar" class="collapsible-bar border-t border-[var(--border)] bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-[var(--card)] py-2 px-3 sm:px-6 shadow-inner">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 text-xs">
         
         <!-- Left: Status Indicators (Swipeable horizontally on small screens) -->
@@ -191,7 +220,7 @@
           </div>
         </div>
 
-        <!-- Right: Actions -->
+        <!-- Right: Actions & Collapse Button -->
         <div class="flex items-center gap-1.5 shrink-0">
           <button onclick="refreshGlobalMarketData(true)" id="btn-global-refresh" title="กดดึงข้อมูลล่าสุดจาก Cloud หรือ Server ทันที" class="px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 transition-all shadow-sm whitespace-nowrap">
             <span id="global-refresh-icon">🔄</span>
@@ -201,6 +230,11 @@
           <button onclick="setCustomServerUrl()" title="ตั้งค่าเชื่อมต่อเซิร์ฟเวอร์ส่วนตัว" class="px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-lg border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 text-xs font-medium flex items-center gap-1 transition-all whitespace-nowrap">
             <span>🌐</span>
             <span class="hidden sm:inline">ตั้งค่า Server</span>
+          </button>
+          <!-- Minimize/Collapse Button for mobile and desktop -->
+          <button onclick="toggleStatusBarManual()" title="ย่อแถบสถานะเพื่อเพิ่มพื้นที่หน้าจอ" class="px-2 py-1 sm:py-1.5 rounded-lg border border-[var(--border)] bg-[var(--secondary)] hover:opacity-80 text-[var(--muted-foreground)] text-xs flex items-center gap-1 transition-all shrink-0">
+            <span>▲</span>
+            <span class="hidden sm:inline text-[11px]">ย่อแถบ</span>
           </button>
         </div>
 
@@ -5302,7 +5336,90 @@
           statusPill.innerHTML = '<span class="w-2 h-2 rounded-full bg-indigo-400"></span><span>🟢 โหมดพร้อมใช้ Standalone (เปิดไฟล์ใช้ได้ทันที)</span>';
         }
       }
+
+      // Sync mini header status pill
+      const miniText = document.getElementById('mini-header-status-text');
+      if (miniText) {
+        if (StandaloneEngine.isServerOnline) miniText.textContent = '🟢 Live Server';
+        else if (StandaloneEngine.marketSnapshot) miniText.textContent = '🟢 Cloud Sync';
+        else miniText.textContent = '🟢 Standalone';
+      }
     }
+
+    // --- 6.0.1 MOBILE SMART HEADER AUTO-COLLAPSE CONTROLLER ---
+    let lastHeaderScrollY = window.scrollY;
+    let isHeaderBarManualCollapsed = false;
+
+    function collapseHeaderStatusBar() {
+      const statusBar = document.getElementById('global-live-status-bar');
+      const aiToolbar = document.getElementById('quick-ai-toolbar');
+      const miniBadge = document.getElementById('mini-header-status-badge');
+      if (statusBar) statusBar.classList.add('bar-collapsed');
+      if (aiToolbar && window.innerWidth < 1024) aiToolbar.classList.add('bar-collapsed');
+      if (miniBadge) {
+        miniBadge.classList.remove('hidden');
+        miniBadge.classList.add('inline-flex');
+      }
+    }
+
+    function expandHeaderStatusBar() {
+      const statusBar = document.getElementById('global-live-status-bar');
+      const aiToolbar = document.getElementById('quick-ai-toolbar');
+      const miniBadge = document.getElementById('mini-header-status-badge');
+      if (statusBar) statusBar.classList.remove('bar-collapsed');
+      if (aiToolbar) aiToolbar.classList.remove('bar-collapsed');
+      if (miniBadge) {
+        miniBadge.classList.add('hidden');
+        miniBadge.classList.remove('inline-flex');
+      }
+    }
+
+    function toggleStatusBarManual() {
+      const statusBar = document.getElementById('global-live-status-bar');
+      if (!statusBar) return;
+      if (statusBar.classList.contains('bar-collapsed')) {
+        isHeaderBarManualCollapsed = false;
+        expandHeaderStatusBar();
+      } else {
+        isHeaderBarManualCollapsed = true;
+        collapseHeaderStatusBar();
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const isMobileOrTablet = window.innerWidth < 1024;
+
+      if (!isMobileOrTablet) return;
+
+      // When back near top, always expand unless user manually collapsed it
+      if (currentScrollY <= 35) {
+        if (!isHeaderBarManualCollapsed) {
+          expandHeaderStatusBar();
+        }
+        lastHeaderScrollY = currentScrollY;
+        return;
+      }
+
+      const diff = currentScrollY - lastHeaderScrollY;
+
+      // Scrolling Down (user reading content) -> Collapse status bar & AI toolbar to maximize reading space
+      if (diff > 8 && currentScrollY > 50) {
+        collapseHeaderStatusBar();
+      }
+      // Scrolling Up (user navigating or wanting to see status) -> Expand smoothly
+      else if (diff < -12 && !isHeaderBarManualCollapsed) {
+        expandHeaderStatusBar();
+      }
+
+      lastHeaderScrollY = currentScrollY;
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 1024 && !isHeaderBarManualCollapsed) {
+        expandHeaderStatusBar();
+      }
+    });
 
     async function refreshGlobalMarketData(manual = false) {
       const btn = document.getElementById('btn-global-refresh');
