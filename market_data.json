@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "updated_at_utc": "2026-10-27T20:30:25.262811+00:00",
-  "updated_at_th": "28 Oct 2026 03:30 น. (เวลาไทย)",
+  "updated_at_utc": "2026-10-27T21:22:27.577429+00:00",
+  "updated_at_th": "28 Oct 2026 04:22 น. (เวลาไทย)",
   "source": "GitHub Actions Cloud Real-Time OCC Sync",
   "stocks": {
     "SOFI": {
@@ -1229,8 +1229,8 @@
             {
               "strike": 242.5,
               "bid": 1.16,
-              "ask": 1.27,
-              "mid": 1.21,
+              "ask": 1.28,
+              "mid": 1.22,
               "lastPrice": 1.3,
               "volume": 227,
               "openInterest": 27,
@@ -1886,12 +1886,12 @@
             {
               "strike": 220.0,
               "bid": 2.07,
-              "ask": 2.01,
-              "mid": 2.04,
+              "ask": 2.07,
+              "mid": 2.07,
               "lastPrice": 2.08,
               "volume": 38644,
               "openInterest": 53027,
-              "iv": 32.0,
+              "iv": 33.0,
               "delta": 0.48
             },
             {
@@ -1908,8 +1908,8 @@
             {
               "strike": 225.0,
               "bid": 0.62,
-              "ask": 0.63,
-              "mid": 0.62,
+              "ask": 0.61,
+              "mid": 0.61,
               "lastPrice": 0.63,
               "volume": 33816,
               "openInterest": 58558,
@@ -3058,12 +3058,12 @@
             {
               "strike": 655.0,
               "bid": 92.4,
-              "ask": 98.05,
-              "mid": 95.22,
+              "ask": 98.5,
+              "mid": 95.45,
               "lastPrice": 151.5,
               "volume": 416,
               "openInterest": 2,
-              "iv": 77.0,
+              "iv": 82.0,
               "delta": -0.92
             },
             {
@@ -3203,12 +3203,12 @@
             {
               "strike": 440.0,
               "bid": 117.75,
-              "ask": 122.85,
-              "mid": 120.3,
+              "ask": 122.95,
+              "mid": 120.35,
               "lastPrice": 122.1,
               "volume": 10,
               "openInterest": 36,
-              "iv": 84.0,
+              "iv": 92.0,
               "delta": 0.95
             },
             {
@@ -3291,12 +3291,12 @@
             {
               "strike": 465.0,
               "bid": 92.85,
-              "ask": 97.95,
-              "mid": 95.4,
+              "ask": 98.1,
+              "mid": 95.47,
               "lastPrice": 96.35,
               "volume": 9,
               "openInterest": 32,
-              "iv": 77.0,
+              "iv": 81.0,
               "delta": 0.93
             },
             {
@@ -3346,12 +3346,12 @@
             {
               "strike": 480.0,
               "bid": 79.0,
-              "ask": 82.9,
-              "mid": 80.95,
+              "ask": 83.1,
+              "mid": 81.05,
               "lastPrice": 80.0,
               "volume": 15,
               "openInterest": 147,
-              "iv": 83.0,
+              "iv": 85.0,
               "delta": 0.86
             },
             {
@@ -5471,13 +5471,13 @@
             },
             {
               "strike": 350.0,
-              "bid": 0.1,
+              "bid": 0.09,
               "ask": 0.1,
               "mid": 0.1,
               "lastPrice": 0.1,
               "volume": 2045,
               "openInterest": 5119,
-              "iv": 64.0,
+              "iv": 63.0,
               "delta": -0.15
             },
             {
@@ -5570,9 +5570,9 @@
             },
             {
               "strike": 372.5,
-              "bid": 0.31,
+              "bid": 0.27,
               "ask": 0.29,
-              "mid": 0.3,
+              "mid": 0.28,
               "lastPrice": 0.29,
               "volume": 1141,
               "openInterest": 1666,
@@ -5669,9 +5669,9 @@
             },
             {
               "strike": 395.0,
-              "bid": 1.98,
+              "bid": 1.95,
               "ask": 2.01,
-              "mid": 1.99,
+              "mid": 1.98,
               "lastPrice": 1.97,
               "volume": 9195,
               "openInterest": 2798,
@@ -5702,9 +5702,9 @@
             },
             {
               "strike": 402.5,
-              "bid": 4.1,
+              "bid": 3.95,
               "ask": 4.1,
-              "mid": 4.1,
+              "mid": 4.03,
               "lastPrice": 4.05,
               "volume": 6922,
               "openInterest": 210,
@@ -5713,9 +5713,9 @@
             },
             {
               "strike": 405.0,
-              "bid": 5.1,
+              "bid": 4.95,
               "ask": 5.05,
-              "mid": 5.07,
+              "mid": 5.0,
               "lastPrice": 5.09,
               "volume": 10710,
               "openInterest": 157,
@@ -5735,9 +5735,9 @@
             },
             {
               "strike": 410.0,
-              "bid": 7.4,
+              "bid": 7.3,
               "ask": 7.8,
-              "mid": 7.6,
+              "mid": 7.55,
               "lastPrice": 7.5,
               "volume": 5720,
               "openInterest": 211,
@@ -5746,9 +5746,9 @@
             },
             {
               "strike": 412.5,
-              "bid": 8.85,
+              "bid": 8.7,
               "ask": 9.35,
-              "mid": 9.1,
+              "mid": 9.02,
               "lastPrice": 8.95,
               "volume": 1405,
               "openInterest": 10,
@@ -5757,9 +5757,9 @@
             },
             {
               "strike": 415.0,
-              "bid": 10.45,
+              "bid": 10.4,
               "ask": 10.85,
-              "mid": 10.65,
+              "mid": 10.62,
               "lastPrice": 10.58,
               "volume": 1132,
               "openInterest": 50,
@@ -6365,8 +6365,8 @@
             {
               "strike": 395.0,
               "bid": 14.2,
-              "ask": 14.9,
-              "mid": 14.55,
+              "ask": 14.95,
+              "mid": 14.57,
               "lastPrice": 14.39,
               "volume": 6413,
               "openInterest": 10339,
@@ -6376,12 +6376,12 @@
             {
               "strike": 397.5,
               "bid": 12.3,
-              "ask": 12.85,
-              "mid": 12.57,
+              "ask": 12.95,
+              "mid": 12.62,
               "lastPrice": 12.5,
               "volume": 3118,
               "openInterest": 1223,
-              "iv": 40.0,
+              "iv": 41.0,
               "delta": 0.56
             },
             {
@@ -6398,8 +6398,8 @@
             {
               "strike": 402.5,
               "bid": 8.9,
-              "ask": 9.35,
-              "mid": 9.12,
+              "ask": 9.4,
+              "mid": 9.15,
               "lastPrice": 9.2,
               "volume": 7014,
               "openInterest": 2094,
@@ -6420,8 +6420,8 @@
             {
               "strike": 407.5,
               "bid": 6.15,
-              "ask": 6.45,
-              "mid": 6.3,
+              "ask": 6.5,
+              "mid": 6.33,
               "lastPrice": 6.4,
               "volume": 7431,
               "openInterest": 1582,
@@ -6431,8 +6431,8 @@
             {
               "strike": 410.0,
               "bid": 5.1,
-              "ask": 5.15,
-              "mid": 5.12,
+              "ask": 5.2,
+              "mid": 5.15,
               "lastPrice": 5.2,
               "volume": 19276,
               "openInterest": 7751,
@@ -6442,8 +6442,8 @@
             {
               "strike": 412.5,
               "bid": 4.0,
-              "ask": 4.25,
-              "mid": 4.12,
+              "ask": 4.3,
+              "mid": 4.15,
               "lastPrice": 4.1,
               "volume": 5774,
               "openInterest": 2269,
@@ -6486,12 +6486,12 @@
             {
               "strike": 422.5,
               "bid": 1.54,
-              "ask": 1.58,
-              "mid": 1.56,
+              "ask": 1.51,
+              "mid": 1.52,
               "lastPrice": 1.6,
               "volume": 3115,
               "openInterest": 1779,
-              "iv": 38.0,
+              "iv": 37.0,
               "delta": 0.41
             },
             {
@@ -7801,7 +7801,7 @@
               "ask": 3.5,
               "mid": 3.4,
               "lastPrice": 3.45,
-              "volume": 779,
+              "volume": 780,
               "openInterest": 3157,
               "iv": 79.0,
               "delta": -0.4
@@ -8306,12 +8306,12 @@
             {
               "strike": 92.0,
               "bid": 6.15,
-              "ask": 6.35,
-              "mid": 6.25,
+              "ask": 6.25,
+              "mid": 6.2,
               "lastPrice": 6.3,
               "volume": 830,
               "openInterest": 1139,
-              "iv": 83.0,
+              "iv": 82.0,
               "delta": 0.55
             },
             {
@@ -9867,13 +9867,13 @@
             },
             {
               "strike": 352.5,
-              "bid": 32.9,
-              "ask": 35.0,
-              "mid": 33.95,
+              "bid": 31.5,
+              "ask": 35.05,
+              "mid": 33.27,
               "lastPrice": 32.0,
               "volume": 2,
               "openInterest": 1,
-              "iv": 63.0,
+              "iv": 56.0,
               "delta": -0.75
             },
             {
@@ -9890,34 +9890,34 @@
             {
               "strike": 357.5,
               "bid": 36.25,
-              "ask": 39.55,
-              "mid": 37.9,
+              "ask": 39.65,
+              "mid": 37.95,
               "lastPrice": 37.15,
               "volume": 10,
               "openInterest": 5,
-              "iv": 56.0,
+              "iv": 57.0,
               "delta": -0.79
             },
             {
               "strike": 360.0,
               "bid": 38.55,
-              "ask": 41.9,
-              "mid": 40.22,
+              "ask": 42.2,
+              "mid": 40.38,
               "lastPrice": 39.52,
               "volume": 10,
               "openInterest": 5,
-              "iv": 56.0,
+              "iv": 59.0,
               "delta": -0.81
             },
             {
               "strike": 365.0,
               "bid": 43.05,
-              "ask": 46.65,
-              "mid": 44.85,
+              "ask": 46.9,
+              "mid": 44.97,
               "lastPrice": 38.21,
               "volume": 0,
               "openInterest": 5,
-              "iv": 54.0,
+              "iv": 57.0,
               "delta": -0.85
             }
           ],
