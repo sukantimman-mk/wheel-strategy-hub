@@ -1,7 +1,7 @@
 {
   "status": "success",
-  "updated_at_utc": "2026-10-30T21:59:02.736147+00:00",
-  "updated_at_th": "31 Oct 2026 04:59 น. (เวลาไทย)",
+  "updated_at_utc": "2026-10-30T22:30:08.711610+00:00",
+  "updated_at_th": "31 Oct 2026 05:30 น. (เวลาไทย)",
   "source": "GitHub Actions Cloud Real-Time OCC Sync",
   "stocks": {
     "SOFI": {
@@ -2577,7 +2577,7 @@
               "ask": 33.45,
               "mid": 31.38,
               "lastPrice": 36.64,
-              "volume": 373,
+              "volume": 372,
               "openInterest": 130,
               "iv": 61.0,
               "delta": -0.65
