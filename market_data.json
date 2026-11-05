@@ -1,24 +1,390 @@
 {
   "status": "success",
-  "updated_at_utc": "2026-11-05T22:12:08.054063+00:00",
-  "updated_at_th": "06 Nov 2026 05:12 น. (เวลาไทย)",
+  "updated_at_utc": "2026-11-05T23:09:04.572348+00:00",
+  "updated_at_th": "06 Nov 2026 06:09 น. (เวลาไทย)",
   "source": "GitHub Actions Cloud Real-Time OCC Sync",
   "stocks": {
     "SOFI": {
       "ticker": "SOFI",
-      "name": "SOFI Inc.",
-      "price": 0.0,
+      "name": "SoFi Technologies, Inc.",
+      "price": 16.04,
       "change": 0.0,
       "change_pct": 0.0,
       "iv": 45.0,
       "ivr": 50,
       "hv": 38.0,
-      "cap": "N/A",
-      "sector": "Technology",
-      "industry": "General",
+      "cap": "$20.80B",
+      "sector": "Financial Services",
+      "industry": "Credit Services",
       "earnings_date": "",
-      "expirations": [],
-      "chains": {}
+      "expirations": [
+        "2026-11-06",
+        "2026-11-13",
+        "2026-11-20",
+        "2026-11-27",
+        "2026-12-04",
+        "2026-12-11"
+      ],
+      "chains": {
+        "2026-11-13": {
+          "puts": [
+            {
+              "strike": 12.5,
+              "bid": 0.01,
+              "ask": 0.04,
+              "mid": 0.03,
+              "lastPrice": 0.04,
+              "volume": 50,
+              "openInterest": 771,
+              "iv": 86.0,
+              "delta": -0.05
+            },
+            {
+              "strike": 13.0,
+              "bid": 0.03,
+              "ask": 0.05,
+              "mid": 0.04,
+              "lastPrice": 0.05,
+              "volume": 141,
+              "openInterest": 2458,
+              "iv": 82.0,
+              "delta": -0.05
+            },
+            {
+              "strike": 13.5,
+              "bid": 0.06,
+              "ask": 0.07,
+              "mid": 0.07,
+              "lastPrice": 0.07,
+              "volume": 1716,
+              "openInterest": 2054,
+              "iv": 78.0,
+              "delta": -0.1
+            },
+            {
+              "strike": 14.0,
+              "bid": 0.1,
+              "ask": 0.11,
+              "mid": 0.11,
+              "lastPrice": 0.11,
+              "volume": 13562,
+              "openInterest": 2434,
+              "iv": 74.0,
+              "delta": -0.18
+            },
+            {
+              "strike": 14.5,
+              "bid": 0.15,
+              "ask": 0.18,
+              "mid": 0.16,
+              "lastPrice": 0.16,
+              "volume": 1702,
+              "openInterest": 2166,
+              "iv": 70.0,
+              "delta": -0.26
+            },
+            {
+              "strike": 15.0,
+              "bid": 0.26,
+              "ask": 0.28,
+              "mid": 0.27,
+              "lastPrice": 0.27,
+              "volume": 3031,
+              "openInterest": 4011,
+              "iv": 68.0,
+              "delta": -0.34
+            },
+            {
+              "strike": 15.5,
+              "bid": 0.4,
+              "ask": 0.43,
+              "mid": 0.42,
+              "lastPrice": 0.43,
+              "volume": 3744,
+              "openInterest": 3895,
+              "iv": 66.0,
+              "delta": -0.42
+            },
+            {
+              "strike": 16.0,
+              "bid": 0.61,
+              "ask": 0.63,
+              "mid": 0.62,
+              "lastPrice": 0.62,
+              "volume": 2124,
+              "openInterest": 3809,
+              "iv": 64.0,
+              "delta": -0.49
+            },
+            {
+              "strike": 16.5,
+              "bid": 0.86,
+              "ask": 0.92,
+              "mid": 0.89,
+              "lastPrice": 0.89,
+              "volume": 1570,
+              "openInterest": 2286,
+              "iv": 62.0,
+              "delta": -0.57
+            },
+            {
+              "strike": 17.0,
+              "bid": 1.12,
+              "ask": 1.26,
+              "mid": 1.19,
+              "lastPrice": 1.15,
+              "volume": 1541,
+              "openInterest": 2151,
+              "iv": 57.0,
+              "delta": -0.65
+            },
+            {
+              "strike": 17.5,
+              "bid": 1.57,
+              "ask": 1.72,
+              "mid": 1.65,
+              "lastPrice": 1.57,
+              "volume": 433,
+              "openInterest": 1856,
+              "iv": 65.0,
+              "delta": -0.73
+            },
+            {
+              "strike": 18.0,
+              "bid": 1.92,
+              "ask": 2.09,
+              "mid": 2.0,
+              "lastPrice": 2.21,
+              "volume": 76,
+              "openInterest": 467,
+              "iv": 51.0,
+              "delta": -0.81
+            },
+            {
+              "strike": 18.5,
+              "bid": 2.33,
+              "ask": 2.63,
+              "mid": 2.48,
+              "lastPrice": 2.45,
+              "volume": 59,
+              "openInterest": 131,
+              "iv": 51.0,
+              "delta": -0.88
+            },
+            {
+              "strike": 19.0,
+              "bid": 2.83,
+              "ask": 3.1,
+              "mid": 2.96,
+              "lastPrice": 3.2,
+              "volume": 88,
+              "openInterest": 229,
+              "iv": 90.0,
+              "delta": -0.95
+            },
+            {
+              "strike": 19.5,
+              "bid": 3.3,
+              "ask": 3.55,
+              "mid": 3.42,
+              "lastPrice": 3.7,
+              "volume": 4,
+              "openInterest": 302,
+              "iv": 89.0,
+              "delta": -0.95
+            },
+            {
+              "strike": 20.0,
+              "bid": 3.9,
+              "ask": 4.05,
+              "mid": 3.97,
+              "lastPrice": 2.6,
+              "volume": 4,
+              "openInterest": 219,
+              "iv": 69.0,
+              "delta": -0.95
+            }
+          ],
+          "calls": [
+            {
+              "strike": 12.5,
+              "bid": 3.5,
+              "ask": 3.75,
+              "mid": 3.62,
+              "lastPrice": 4.05,
+              "volume": 1,
+              "openInterest": 151,
+              "iv": 111.0,
+              "delta": 0.95
+            },
+            {
+              "strike": 13.0,
+              "bid": 2.99,
+              "ask": 3.25,
+              "mid": 3.12,
+              "lastPrice": 2.8,
+              "volume": 42,
+              "openInterest": 495,
+              "iv": 96.0,
+              "delta": 0.95
+            },
+            {
+              "strike": 13.5,
+              "bid": 2.47,
+              "ask": 2.75,
+              "mid": 2.61,
+              "lastPrice": 2.62,
+              "volume": 35,
+              "openInterest": 108,
+              "iv": 80.0,
+              "delta": 0.9
+            },
+            {
+              "strike": 14.0,
+              "bid": 2.0,
+              "ask": 2.3,
+              "mid": 2.15,
+              "lastPrice": 2.06,
+              "volume": 21,
+              "openInterest": 1477,
+              "iv": 75.0,
+              "delta": 0.82
+            },
+            {
+              "strike": 14.5,
+              "bid": 1.66,
+              "ask": 1.86,
+              "mid": 1.76,
+              "lastPrice": 1.69,
+              "volume": 279,
+              "openInterest": 957,
+              "iv": 79.0,
+              "delta": 0.74
+            },
+            {
+              "strike": 15.0,
+              "bid": 1.26,
+              "ask": 1.42,
+              "mid": 1.34,
+              "lastPrice": 1.27,
+              "volume": 931,
+              "openInterest": 1105,
+              "iv": 72.0,
+              "delta": 0.66
+            },
+            {
+              "strike": 15.5,
+              "bid": 0.92,
+              "ask": 0.98,
+              "mid": 0.95,
+              "lastPrice": 0.99,
+              "volume": 3018,
+              "openInterest": 2257,
+              "iv": 65.0,
+              "delta": 0.58
+            },
+            {
+              "strike": 16.0,
+              "bid": 0.66,
+              "ask": 0.68,
+              "mid": 0.67,
+              "lastPrice": 0.68,
+              "volume": 6024,
+              "openInterest": 2863,
+              "iv": 65.0,
+              "delta": 0.51
+            },
+            {
+              "strike": 16.5,
+              "bid": 0.42,
+              "ask": 0.44,
+              "mid": 0.43,
+              "lastPrice": 0.43,
+              "volume": 4274,
+              "openInterest": 4073,
+              "iv": 62.0,
+              "delta": 0.43
+            },
+            {
+              "strike": 17.0,
+              "bid": 0.25,
+              "ask": 0.27,
+              "mid": 0.26,
+              "lastPrice": 0.26,
+              "volume": 8979,
+              "openInterest": 12175,
+              "iv": 61.0,
+              "delta": 0.35
+            },
+            {
+              "strike": 17.5,
+              "bid": 0.14,
+              "ask": 0.16,
+              "mid": 0.15,
+              "lastPrice": 0.15,
+              "volume": 10672,
+              "openInterest": 7168,
+              "iv": 60.0,
+              "delta": 0.27
+            },
+            {
+              "strike": 18.0,
+              "bid": 0.07,
+              "ask": 0.09,
+              "mid": 0.08,
+              "lastPrice": 0.08,
+              "volume": 5671,
+              "openInterest": 11871,
+              "iv": 59.0,
+              "delta": 0.19
+            },
+            {
+              "strike": 18.5,
+              "bid": 0.04,
+              "ask": 0.05,
+              "mid": 0.04,
+              "lastPrice": 0.05,
+              "volume": 1639,
+              "openInterest": 8016,
+              "iv": 60.0,
+              "delta": 0.12
+            },
+            {
+              "strike": 19.0,
+              "bid": 0.02,
+              "ask": 0.04,
+              "mid": 0.03,
+              "lastPrice": 0.03,
+              "volume": 1742,
+              "openInterest": 8448,
+              "iv": 63.0,
+              "delta": 0.05
+            },
+            {
+              "strike": 19.5,
+              "bid": 0.02,
+              "ask": 0.03,
+              "mid": 0.03,
+              "lastPrice": 0.03,
+              "volume": 495,
+              "openInterest": 3181,
+              "iv": 68.0,
+              "delta": 0.05
+            },
+            {
+              "strike": 20.0,
+              "bid": 0.01,
+              "ask": 0.02,
+              "mid": 0.01,
+              "lastPrice": 0.02,
+              "volume": 454,
+              "openInterest": 4434,
+              "iv": 69.0,
+              "delta": 0.05
+            }
+          ]
+        }
+      }
     },
     "PLTR": {
       "ticker": "PLTR",
@@ -6122,14 +6488,14 @@
     {
       "rank": 1,
       "ticker": "SOFI",
-      "name": "SOFI Inc.",
-      "price": 0.0,
+      "name": "SoFi Technologies, Inc.",
+      "price": 16.04,
       "badge": "🏆 BEST OVERALL SWEET SPOT",
       "score": 94.5,
-      "best_strike": 0.0,
-      "recommended_exp": "2026-11-20",
+      "best_strike": 14.5,
+      "recommended_exp": "2026-11-13",
       "dte": 35,
-      "premium_dollar": 0,
+      "premium_dollar": 56,
       "apr": 36.8,
       "discount_pct": 10.0,
       "why_picked": "GAAP Net Income กำไร 4 ไตรมาสติด มี National Bank Charter พรีเมียมสูงคุ้มค่าความเสี่ยงสูงสุดในกลุ่ม FinTech"
